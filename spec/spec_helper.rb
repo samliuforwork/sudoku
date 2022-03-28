@@ -1,4 +1,5 @@
 require './spec/shared_contexts/stuff'
+require File.expand_path('../config/environment', __dir__)
 
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
