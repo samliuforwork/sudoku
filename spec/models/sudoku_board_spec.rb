@@ -16,13 +16,28 @@ RSpec.describe SudokuBoard, type: :model do
     end
   end
 
-  describe '#check_columns' do
+  describe '#check' do
     let(:sudoku_solution) { SudokuBoard.new(puzzle_array: solution) }
 
-    it 'only returns true when all rows pass' do
-      sudoku_solution.to_string
-      expect(sudoku_solution.check_columns).to include(true)
-      expect(sudoku_solution.check_columns).not_to include(false)
+    context 'with parameter rows' do
+      it 'only returns true when all rows pass' do
+        expect(sudoku_solution.check(type: 'rows')).to include(true)
+        expect(sudoku_solution.check(type: 'rows')).not_to include(false)
+      end
+    end
+
+    context 'with parameter columns' do
+      it 'only returns true when all columns pass' do
+        expect(sudoku_solution.check(type: 'columns')).to include(true)
+        expect(sudoku_solution.check(type: 'columns')).not_to include(false)
+      end
+    end
+
+    context 'with parameter blocks' do
+      it 'only returns true when all blocks pass' do
+        expect(sudoku_solution.check(type: 'blocks')).to include(true)
+        expect(sudoku_solution.check(type: 'blocks')).not_to include(false)
+      end
     end
   end
 end
