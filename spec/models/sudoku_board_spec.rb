@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 
 RSpec.describe SudokuBoard, type: :model do
@@ -37,6 +39,24 @@ RSpec.describe SudokuBoard, type: :model do
       it 'only returns true when all blocks pass' do
         expect(sudoku_solution.check(type: 'blocks')).to include(true)
         expect(sudoku_solution.check(type: 'blocks')).not_to include(false)
+      end
+    end
+  end
+
+  describe '#possible_value' do
+    context 'when coordinate point is (3, 3)' do
+      let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
+
+      it 'shows possible result 5, 9' do
+        expect(sudoku.possible_value(3, 3)).to contain_exactly(5, 9)
+      end
+    end
+
+    context 'when coordinate point is (2, 3)' do
+      let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
+
+      it 'shows possible result 5' do
+        expect(sudoku.possible_value(2, 3)).to contain_exactly(5)
       end
     end
   end

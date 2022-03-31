@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SudokuBoard
   attr_accessor :puzzle_string, :puzzle_array
 
@@ -31,31 +33,59 @@ class SudokuBoard
     end
   end
 
-  def blocks(size: 9, block_size: 3)
+  def all_blocks(block_size: 3)
     result = []
-
     block_size.times do |index|
-      block_range = index * block_size..(index * block_size + 2)
-      middle_range = block_size..(block_size + 2)
-
-      result << rows.map { |row| row[block_range] }.first(block_size).join('')
-      result << rows.map { |row| row[block_range] }[middle_range].join('')
-      result << rows.map { |row| row[block_range] }.last(block_size).join('')
+      result << blocks_sections(index: index).reverse
     end
 
-    result
+    result.flatten
+  end
+
+  def blocks_sections(index:, block_size: 3)
+    block_range = index * block_size..(index * block_size + 2)
+    middle_range = block_size..(block_size + 2)
+    rows_section = rows.map { |row| row[block_range] }
+
+    [
+      rows_section.first(block_size).join(''),
+      rows_section[middle_range].join(''),
+      rows_section.last(block_size).join('')
+    ]
   end
 
   def check(type:)
     case type
     when 'rows'
-      type = self.rows
+      type = rows
     when 'columns'
-      type = self.columns
+      type = columns
     when 'blocks'
-      type = self.blocks
+      type = all_blocks
     end
+
     type.map { |board| right_serial?(check_string: board) }
+  end
+
+  def possible_value(x_coordinate, y_coordinate)
+    row = convert_to_integer_array(rows.reverse[y_coordinate - 1])
+    column = convert_to_integer_array(columns[x_coordinate - 1])
+    block_index = block_position(x_coordinate, y_coordinate)
+    block_hash = Hash[
+                  all_blocks
+                  # .map(&:reverse)
+                  .flatten
+                  .zip(
+                  [
+                    [1, 1], [1, 2], [1, 3],
+                    [2, 1], [2, 2], [2, 3],
+                    [3, 1], [3, 2], [3, 3]
+                  ]
+                )
+                      ]
+    block = block_hash.key(block_index)
+
+    [*1..9] - (row + column + convert_to_integer_array(block))
   end
 
   private
@@ -86,5 +116,27 @@ class SudokuBoard
 
   def right_serial?(check_string:, size: 9)
     check_string.size == size && check_string.squeeze.chars.sort.join('').match?(/123456789/)
+  end
+
+  def block_position(x_coordinate, y_coordinate)
+    case x_coordinate
+    when (1..3)
+      x_position = 1
+    when (4..6)
+      x_position = 2
+    when (7..9)
+      x_position = 3
+    end
+
+    case y_coordinate
+    when (1..3)
+      y_position = 1
+    when (4..6)
+      y_position = 2
+    when (7..9)
+      y_position = 3
+    end
+
+    [x_position, y_position]
   end
 end

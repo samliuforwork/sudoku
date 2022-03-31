@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 RSpec.shared_context 'shared stuff' do
   let(:board_string) do
     '090000006000960485000581000004000000517200900602000370100804020706000810300090000'

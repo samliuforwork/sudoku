@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require './spec/shared_contexts/stuff'
 require File.expand_path('../config/environment', __dir__)
 
