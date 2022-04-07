@@ -43,20 +43,62 @@ RSpec.describe SudokuBoard, type: :model do
     end
   end
 
-  describe '#possible_value' do
-    context 'when coordinate point is (3, 3)' do
-      let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
+  describe '#possible_answers' do
+    let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
 
+    context 'when coordinate point is (3, 3)' do
       it 'shows possible result 5, 9' do
-        expect(sudoku.possible_value(3, 3)).to contain_exactly(5, 9)
+        expect(sudoku.possible_answers(3, 3)).to contain_exactly(5, 9)
       end
     end
 
     context 'when coordinate point is (2, 3)' do
-      let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
-
       it 'shows possible result 5' do
-        expect(sudoku.possible_value(2, 3)).to contain_exactly(5)
+        expect(sudoku.possible_answers(2, 3)).to contain_exactly(5)
+      end
+    end
+  end
+
+  describe '#value' do
+    let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
+
+    context 'when coordinate point is (1, 2)' do
+      it 'shows value result 7' do
+        expect(sudoku.value(1, 2)).to eq(7)
+      end
+    end
+
+    context 'when coordinate point is (9, 9)' do
+      it ' value result 6' do
+        expect(sudoku.value(9, 9)).to eq(6)
+      end
+    end
+
+    context 'when coordinate point is (2, 3)' do
+      it 'shows value result 0' do
+        expect(sudoku.value(2, 3)).to eq(0)
+      end
+    end
+  end
+
+  describe '#answer' do
+    let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
+
+    context 'when point has only one answer' do
+      it 'shows answer value' do
+        expect(sudoku.answer(2, 3)).to eq(5)
+      end
+    end
+
+    context 'when point has many possible answers' do
+      it 'shows all possible asnwers array' do
+        expect(sudoku.answer(4, 1)).to contain_exactly(1, 6, 7)
+      end
+    end
+
+    context 'when point has default non-zero value' do
+      it 'shows non-zero position string' do
+        expect(sudoku.answer(1, 4)).to eq('non-zero position')
       end
     end
   end

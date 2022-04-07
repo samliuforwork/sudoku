@@ -3,6 +3,10 @@
 class SudokuBoard
   attr_accessor :puzzle_string, :puzzle_array
 
+  BLOCK_COORDINATE = [
+    [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3], [3, 1], [3, 2], [3, 3]
+  ].freeze
+
   def initialize(puzzle_string: nil, puzzle_array: nil)
     @puzzle_string = puzzle_string
     @puzzle_array = puzzle_array
@@ -67,21 +71,34 @@ class SudokuBoard
     type.map { |board| right_serial?(check_string: board) }
   end
 
-  def possible_value(x_coordinate, y_coordinate)
+  def value(x_coordinate, y_coordinate)
+    rows.reverse[y_coordinate - 1][x_coordinate - 1].to_i
+  end
+
+  def possible_answers(x_coordinate, y_coordinate)
+    return 'non-zero position' unless value(x_coordinate, y_coordinate).zero?
+
     row = convert_to_integer_array(rows.reverse[y_coordinate - 1])
     column = convert_to_integer_array(columns[x_coordinate - 1])
     block_index = block_position(x_coordinate, y_coordinate)
     block_hash =
       Hash[all_blocks
       .flatten
-      .zip([
-             [1, 1], [1, 2], [1, 3], [2, 1], [2, 2], [2, 3], [3, 1], [3, 2], [3, 3]
-           ])
+      .zip(BLOCK_COORDINATE)
           ]
     block = block_hash.key(block_index)
 
     [*1..9] - (row + column + convert_to_integer_array(block))
   end
+
+  def answer(x_coordinate, y_coordinate)
+    answers = possible_answers(x_coordinate, y_coordinate)
+    answers.size == 1 ? answers[0] : answers
+  end
+
+  # def answer
+    
+  # end
 
   private
 
