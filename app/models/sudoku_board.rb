@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class SudokuBoard
   attr_accessor :puzzle_string, :puzzle_array
 
@@ -20,8 +18,7 @@ class SudokuBoard
   def find_empty_position
     case puzzle_string.class.to_s
     when 'String'
-      index_empty = reorder.enum_for(:scan, /0/).map { Regexp.last_match.offset(0).last }
-      all_coordinate_converter(index_empty)
+      all_coordinate_converter(find_all_index(0))
     else
       raise StandardError, 'Given unknown type, only allow input string class.'
     end
@@ -93,12 +90,39 @@ class SudokuBoard
 
   def answer(x_coordinate, y_coordinate)
     answers = possible_answers(x_coordinate, y_coordinate)
-    answers.size == 1 ? answers[0] : answers
+    if answers.size == 1
+      string_index = x_coordinate + y_coordinate * 8 - 1
+      # need refactoring
+      tmp_string = reorder.dup
+      tmp_string[string_index] = answers[0].to_s
+      @puzzle_string = tmp_string
+      answers[0]
+    else
+      answers
+    end
   end
 
-  # def answer
-    
-  # end
+  def cross_eliminate_coordinate(number)
+    raise StandardError, 'parameter type error, number should be a integer' unless number.is_a?(Integer)
+
+    find_all_index(number).map do |index|
+      [index % 9, index / 9 + 1]
+    end
+  end
+
+  def all_answers
+    while find_empty_position.size > 10
+      find_empty_position.map do |position|
+        next if answer(position[0], position[1]).size > 1
+      end
+    end
+
+    puzzle_string
+  end
+
+  def find_all_index(number)
+    reorder.enum_for(:scan, /#{number}/).map { Regexp.last_match.offset(0).last }
+  end
 
   private
 

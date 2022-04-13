@@ -102,4 +102,13 @@ RSpec.describe SudokuBoard, type: :model do
       end
     end
   end
+
+  describe '#all_answers' do
+    let(:sudoku) { SudokuBoard.new(puzzle_string: board_string) }
+
+    it 'means get sudoku solution' do
+      # expect(sudoku.all_answers).to eq('123')
+      pp sudoku.cross_eliminate_coordinate(9)
+    end
+  end
 end
